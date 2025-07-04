@@ -69,17 +69,6 @@ void NeoPixelConnect::neoPixelInit(byte pinNumber, uint16_t numberOfPixels)
 /// @param g: green value(0-255)
 /// @param b: blue value (0-255)
 /// @param autoShow: If true, show the change immediately.
-// void NeoPixelConnect::neoPixelSetValue(uint16_t pixelNumber, uint8_t r, uint8_t g, uint8_t b, bool autoShow)
-// {
-//     this->pixelBuffer[pixelNumber][RED] = r;
-//     this->pixelBuffer[pixelNumber][GREEN] = g;
-//     this->pixelBuffer[pixelNumber][BLUE] = b;
-//     if (autoShow)
-//     {
-//         this->neoPixelShow();
-//     }
-// }
-
 void NeoPixelConnect::neoPixelSetValue(uint16_t pixelNumber, uint8_t r, uint8_t g, uint8_t b, bool autoShow)
 {
     // Store original values
