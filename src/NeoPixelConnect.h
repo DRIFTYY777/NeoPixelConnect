@@ -19,7 +19,7 @@
 #define NEOPIXEL_CONNECT_NEOPIXELCONNECT_H
 
 #include <Arduino.h>
-#include"stdio.h"
+#include "stdio.h"
 #include <stdlib.h>
 
 #include "hardware/pio.h"
@@ -30,14 +30,13 @@
 #include "ws2812.pio.h"
 
 #ifndef MAXIMUM_NUM_NEOPIXELS
-#   define MAXIMUM_NUM_NEOPIXELS 1024
+#define MAXIMUM_NUM_NEOPIXELS 1024
 #endif
 
 // Pixel buffer array offsets
 #define RED 0
 #define GREEN 1
 #define BLUE 2
-
 
 class NeoPixelConnect
 {
@@ -56,7 +55,7 @@ public:
     NeoPixelConnect(byte pinNumber, uint16_t numberOfPixels, PIO pio, uint sm);
 
     /// @brief Destructor
-    virtual ~NeoPixelConnect(){};
+    virtual ~NeoPixelConnect() {};
 
     ///@brief Initialize the class instance after calling constructor
     /// @param pinNumber: GPIO pin that controls the NeoPixel string.
@@ -70,19 +69,19 @@ public:
     /// @param g: green value(0-255)
     /// @param b: blue value (0-255)
     /// @param autoShow: If true, show the change immediately.
-    void neoPixelSetValue(uint16_t pixel_number, uint8_t r=0, uint8_t g=0, uint8_t b=0, bool autoShow=false);
+    void neoPixelSetValue(uint16_t pixel_number, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, bool autoShow = false);
 
     /// @brief Set all the pixels to "off".
     /// @param autoShow: If true, show the change immediately
     // set all pixels to 0
-    void neoPixelClear(bool autoShow=true);
+    void neoPixelClear(bool autoShow = true);
 
     /// @brief Fill all the pixels with same value
     /// @param r: red value (0-255)
     /// @param g: green value(0-255)
     /// @param b: blue value (0-255)
     /// @param autoShow: If true, show the change immediately.
-    void neoPixelFill(uint8_t r=0, uint8_t g=0, uint8_t b=0, bool autoShow=true);
+    void neoPixelFill(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, bool autoShow = true);
 
     /// @brief Display all the pixels in the buffer
     void neoPixelShow(void);
@@ -94,10 +93,35 @@ public:
     /// @brief recalculate the clock to match a new CPU clock
     void recalculateClock();
 
+    /// @brief Get the current offset for
+    /// @return The current offset value
+    uint16_t getOffset();
+
+    /// @brief Set the offset for the rainbow chase.
+    /// @param offset: The new offset value.
+    void setOffset(uint16_t offset);
+
+    /// @brief Convert a hue value to a 32-bit RGB value.
+    /// @param hue: The hue value (0-65535).
+    /// @return The 32-bit RGB value.
+    uint32_t ColorHSV(uint16_t hue);
+
+    /// @brief Set the brightness of the NeoPixels.
+    /// @param brightness: The brightness value (0-255).
+    void setBrightness(uint8_t brightness);
+
+    /// @brief Blend two colors based on a ratio.
+    /// @param color1: The first color (32-bit RGB).
+    /// @param color2: The second color (32-bit RGB).
+    /// @param ratio: The blending ratio (0.0 to 1.0).
+    uint32_t blendColors(uint32_t color1, uint32_t color2, float ratio);
 
 private:
     // pio - 0 or 1
     PIO pixelPio;
+
+    // brightness value
+    uint8_t currentBrightness = 255;
 
     // calculated program offset in memory
     uint pixelOffset;
@@ -111,9 +135,11 @@ private:
     // a buffer that holds the color for each pixel
     uint8_t pixelBuffer[MAXIMUM_NUM_NEOPIXELS][3];
 
+    // a buffer that holds the original color for each pixel
+    uint8_t originalBuffer[MAXIMUM_NUM_NEOPIXELS][3];
+
     // create a 32 bit value combining the 3 colors
     uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b);
 };
 
-
-#endif //NEOPIXEL_CONNECT_NEOPIXELCONNECT_H
+#endif // NEOPIXEL_CONNECT_NEOPIXELCONNECT_H
