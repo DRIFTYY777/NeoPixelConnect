@@ -168,27 +168,18 @@ void dualDirectionChase()
 {
     for (int i = 0; i < LED_COUNT; i++)
     {
-        // Forward rainbow
-        uint16_t hue1 = rainbowOffset + (i * 65535 / LED_COUNT);
-        uint32_t color1 = strip.ColorHSV(hue1);
+        // Calculate hue for this pixel position
+        uint16_t pixelHue1 = rainbowOffset + (i * 65535 / RAINBOW_WIDTH);
+        uint16_t pixelHue2 = rainbowOffset + ((LED_COUNT - i) * 65535 / RAINBOW_WIDTH);
 
-        // Backward rainbow
-        uint16_t hue2 = -rainbowOffset + (i * 65535 / LED_COUNT);
-        uint32_t color2 = strip.ColorHSV(hue2);
+        // Convert HSV to RGB for both directions
+        uint32_t color1 = strip.ColorHSV(pixelHue1);
+        uint32_t color2 = strip.ColorHSV(pixelHue2);
 
-        // Blend the two colors
-        uint8_t r1 = (color1 >> 8) & 0xFF;
-        uint8_t g1 = (color1 >> 16) & 0xFF;
-        uint8_t b1 = color1 & 0xFF;
-
-        uint8_t r2 = (color2 >> 8) & 0xFF;
-        uint8_t g2 = (color2 >> 16) & 0xFF;
-        uint8_t b2 = color2 & 0xFF;
-
-        // Average the colors for blending effect
-        uint8_t r = (r1 + r2) / 2;
-        uint8_t g = (g1 + g2) / 2;
-        uint8_t b = (b1 + b2) / 2;
+        // Blend colors from both directions
+        uint8_t r = (((color1 >> 8) & 0xFF) + ((color2 >> 8) & 0xFF)) / 2;
+        uint8_t g = (((color1 >> 16) & 0xFF) + ((color2 >> 16) & 0xFF)) / 2;
+        uint8_t b = ((color1 & 0xFF) + (color2 & 0xFF)) / 2;
 
         strip.neoPixelSetValue(i, r, g, b, false);
     }
@@ -254,22 +245,4 @@ void spiralRainbow()
 
         strip.neoPixelSetValue(i, r, g, b, false);
     }
-}
-
-// Helper function to create smooth color transitions
-uint32_t blendColors(uint32_t color1, uint32_t color2, float ratio)
-{
-    uint8_t r1 = (color1 >> 8) & 0xFF;
-    uint8_t g1 = (color1 >> 16) & 0xFF;
-    uint8_t b1 = color1 & 0xFF;
-
-    uint8_t r2 = (color2 >> 8) & 0xFF;
-    uint8_t g2 = (color2 >> 16) & 0xFF;
-    uint8_t b2 = color2 & 0xFF;
-
-    uint8_t r = r1 + (r2 - r1) * ratio;
-    uint8_t g = g1 + (g2 - g1) * ratio;
-    uint8_t b = b1 + (b2 - b1) * ratio;
-
-    return strip.urgb_u32(r, g, b);
 }
